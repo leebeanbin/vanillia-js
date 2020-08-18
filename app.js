@@ -1,17 +1,22 @@
 const canvas = document.getElementById("jsCanvas");
 const ctx = canvas.getContext("2d");
 const  colors = document.getElementsByClassName("jsColor");
+const range = document.getElementById("jsRange");
+const mode = document.getElementById("jsMode");
 
+const INITIAL_COLOR = "#2c2c2c";
+const CANVAS_SIZE = 700;
 
-
-canvas.width = 700;
-canvas.height = 700;
+canvas.width = CANVAS_SIZE;
+canvas.height = CANVAS_SIZE;
 //pixel modifier에 size를 주지 않으면 코드를 위와 같이 짜도 실행이 되지 않는다.
 
-ctx.strokeStyle = "#2c2c2c";
+ctx.strokeStyle = INITIAL_COLOR;
+ctx.fillStyle = INITIAL_COLOR;
 ctx.lineWidth = 2.5;
 
 let painting = false;
+let filling = false;
 
 
 function stopPainting(event){
@@ -49,6 +54,32 @@ function onMouseDown(event){
 function handleColorClick(event){
     const color = event.target.style.backgroundColor;
     ctx.strokeStyle = color;
+    ctx.fillStyle = color;
+}
+
+function handleRangeChange(event){
+    const size = event.taget.value;
+    ctx.lineWidth = size;
+
+}
+
+function handleModeClick(event){
+    if(filling === true){
+        filling = false;
+        mode.innerText = "Fill";
+
+    }else{
+        filling = true;
+        mode.innerText = "Paint"
+    }
+
+}
+
+function handelCanvasClick(event){
+    if(filling){
+        ctx.fillRect(0,0,CANVAS_SIZE,CANVAS_SIZE);
+    }
+    
 }
 
 if(canvas){
@@ -56,11 +87,20 @@ if(canvas){
     canvas.addEventListener("mousedown",startPainting);
     canvas.addEventListener("mouseup",stopPainting);
     canvas.addEventListener("mouseleave",stopPainting);
+    canvas.addEventListener("click", handelCanvasClick);
 }
 
 Array.from(colors).forEach(color => 
     color.addEventListener("click", handleColorClick)
     );
+
+if(range){
+    range.addEventListener("input",handleRangeChange);
+}
+
+if(mode){
+    mode.addEventListener("click",handleModeClick);
+}
 
     //Array.from은 object로 부터 array를 만든다. forEach 함수는 주어진
     //함수에 대해서 요소 각각에 적용하게 끔 만든다. colors라는 array안에 
